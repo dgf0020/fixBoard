@@ -17,4 +17,6 @@ public interface BoardMapper {
     void updateBoard(Board board);
     // 게시글 삭제
     void deleteBoard(Long id);
+    // 게시글 userId 조회
+    Long getBoardUserId(Long id);
 }
