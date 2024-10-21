@@ -19,4 +19,8 @@ public interface BoardMapper {
     void deleteBoard(Long id);
     // 게시글 userId 조회
     Long getBoardUserId(Long id);
+    // 총 게시글 수 조회
+    int getTotalPosts();
+    // 게시글 목록 페이지별 조회
+    List<Board> getBoardPageList(int pageSize, int offset);
 }

@@ -2,10 +2,7 @@ package com.study.board.domain.board.controller;
 
 import com.study.board.domain.board.dto.req.CreateBoardReqDto;
 import com.study.board.domain.board.dto.req.UpdateBoardReqDto;
-import com.study.board.domain.board.service.CreateBoardService;
-import com.study.board.domain.board.service.DeleteBoardService;
-import com.study.board.domain.board.service.GetBoardService;
-import com.study.board.domain.board.service.UpdateBoardService;
+import com.study.board.domain.board.service.*;
 import com.study.board.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +21,7 @@ public class BoardController {
     private final GetBoardService getBoardService;
     private final DeleteBoardService deleteBoardService;
     private final UpdateBoardService updateBoardService;
+    private final GetBoardPageListService getBoardPageListService;
 
     // 게시글 생성
     // 로그인한 유저만 게시글 생성이 가능하도록!
@@ -102,5 +100,13 @@ public class BoardController {
         updateBoardService.updateBoard(req, id);
 
         return ResponseEntity.ok().body("게시글 수정 완료");
+    }
+
+    // 게시글 목록 페이지별 조회
+    // 로그인하지않아도 조회가 가능해야한다
+    @Operation(summary = "게시판 목록 조회 (pagination)", description = "게시판 목록을 페이지별로 조회합니다.")
+    @GetMapping("/pageList")
+    public ResponseEntity<?> getBoardPageList(@RequestParam(name = "pageNumber") int pageNumber, @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok().body(getBoardPageListService.getBoardPageList(pageNumber, pageSize));
     }
 }
