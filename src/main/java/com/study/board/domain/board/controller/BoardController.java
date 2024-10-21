@@ -1,9 +1,11 @@
 package com.study.board.domain.board.controller;
 
 import com.study.board.domain.board.dto.req.CreateBoardReqDto;
+import com.study.board.domain.board.dto.req.UpdateBoardReqDto;
 import com.study.board.domain.board.service.CreateBoardService;
 import com.study.board.domain.board.service.DeleteBoardService;
 import com.study.board.domain.board.service.GetBoardService;
+import com.study.board.domain.board.service.UpdateBoardService;
 import com.study.board.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +23,7 @@ public class BoardController {
     private final CreateBoardService createBoardService;
     private final GetBoardService getBoardService;
     private final DeleteBoardService deleteBoardService;
+    private final UpdateBoardService updateBoardService;
 
     // 게시글 생성
     // 로그인한 유저만 게시글 생성이 가능하도록!
@@ -78,5 +81,26 @@ public class BoardController {
 
         deleteBoardService.deleteBoard(id);
         return ResponseEntity.ok().body("삭제 완료");
+    }
+
+    // 게시글 수정
+    // 로그인한 유저여야하고,
+    // 해당게시글을 작성한 유저와 로그인한 유저가 동일해야 삭제가 가능
+    @Operation(summary = "게시글 수정", description = "게시글의 제목, 내용을 수정합니다.")
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateBoard(@RequestBody UpdateBoardReqDto req, @PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("로그인 해주세요");
+        }
+
+        if (!user.getId().equals(deleteBoardService.getBoardUserId(id))) {
+            return ResponseEntity.status(401).body("게시글 작성한 유저와 회원정보가 일치하지 않습니다.");
+        }
+
+        updateBoardService.updateBoard(req, id);
+
+        return ResponseEntity.ok().body("게시글 수정 완료");
     }
 }
